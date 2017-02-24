@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="off" monitorInterval="1800">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %-5p (%F:%L) - %m%n"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <root level="debug" includeLocation="true">
+            <appender-ref ref="Console"/>
+        </root>
+
+        <logger name="com.ml" level="debug"/>
+
+    </Loggers>
+</Configuration>
