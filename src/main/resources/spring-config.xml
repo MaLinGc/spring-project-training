@@ -13,4 +13,6 @@
 
     <aop:aspectj-autoproxy expose-proxy="true" proxy-target-class="true"/>
 
+    <import resource="classpath:spring/spring-data-jpa.xml"/>
+    <import resource="classpath:spring/spring-security.xml"/>
 </beans>

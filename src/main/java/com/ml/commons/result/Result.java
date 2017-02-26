@@ -29,4 +29,22 @@ public class Result<T> {
     public void setData(T data) {
         this.data = data;
     }
+
+    public Result() {
+    }
+
+    public Result(boolean success) {
+        this.success = success;
+    }
+
+    public Result(boolean success, String msg) {
+        this.success = success;
+        this.msg = msg;
+    }
+
+    public Result(boolean success, String msg, T data) {
+        this.success = success;
+        this.msg = msg;
+        this.data = data;
+    }
 }

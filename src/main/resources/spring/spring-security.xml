@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <context:component-scan base-package="com.ml.demo.security"/>
+
+    <security:debug/>
+
+    <!--
+        auto-config="true" 默认false 会配置11个默认过滤器
+
+        http://blog.csdn.net/chenxuegui1234/article/details/20834407
+        http://sishuok.com/forum/blogPost/list/4307.html
+        http://sishuok.com/forum/blogPost/list/4308.html
+
+            SecurityContextPersistenceFilter
+            ConcurrentSessionFilter
+            WebAsyncManagerIntegrationFilter
+            HeaderWriterFilter
+            LogoutFilter                                监控一个实际为退出功能的URL（默认为/logout），并且在匹配的时候完成用户的退出功能。
+            UsernamePasswordAuthenticationFilter        监控一个使用用户名和密码基于form认证的URL（默认为/login,POST），并在URL匹配的情况下尝试认证该用户
+            BasicAuthenticationFilter
+            RequestCacheAwareFilter                     用于用户登录成功后，重新恢复因为登录被打断的请求。
+            SecurityContextHolderAwareRequestFilter     主要对当前request进行一个封装成一个SecurityContextHolderAwareRequestWrapper
+            AnonymousAuthenticationFilter               如果用户到这一步还没有经过认证，将会为这个请求关联一个认证的token，标识此用户是匿名的。所以，没被验证的用户就有了一个ROLE_ANONYMOUS的权限了
+            SessionManagementFilter                     根据认证的安全实体信息跟踪session，保证所有关联一个安全实体的session都能被跟踪到。
+            ExceptionTranslationFilter                  解决在处理一个请求时产生的指定异常
+            FilterSecurityInterceptor                   简化授权和访问控制决定，委托一个AccessDecisionManager完成授权的判断
+
+        use-expressions="true" 默认true， 使用SpEL表达式
+
+    -->
+    <security:http pattern="/" security="none"/>
+    <security:http pattern="/login.jsp" security="none"/>
+    <security:http pattern="/favicon.ico" security="none"/>
+    <security:http pattern="/static/**" security="none"/>
+
+    <security:http auto-config="true" use-expressions="true">
+        <security:form-login login-page="/login" username-parameter="email"/>
+        <security:csrf disabled="true"/>
+        <security:custom-filter ref="mySecurityInterceptor" before="FILTER_SECURITY_INTERCEPTOR"/>
+    </security:http>
+
+    <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+    <!--
+        authenticationManager默认实现是ProviderManager
+        默认采用 DaoAuthenticationProvider验证
+    -->
+    <security:authentication-manager alias="authenticationManager">
+        <!--<security:authentication-provider>-->
+        <!--<security:user-service>-->
+        <!--<security:user name="user" password="user" authorities="ROLE_USER"/>-->
+        <!--<security:user name="admin" password="admin" authorities="ROLE_USER,ROLE_ADMIN"/>-->
+        <!--</security:user-service>-->
+        <!--</security:authentication-provider>-->
+
+        <security:authentication-provider user-service-ref="myUserDetailService">
+            <security:password-encoder ref="bCryptPasswordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+</beans>
